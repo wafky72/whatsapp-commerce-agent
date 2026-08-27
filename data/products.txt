@@ -1,0 +1,24 @@
+Product: Ultra-Whitening Toothpaste
+Price: $15.00
+Description: A fluoride-free toothpaste with activated charcoal for gentle whitening. Good for sensitive teeth.
+Stock: In Stock
+
+Product: Bamboo Toothbrush Set (4-pack)
+Price: $12.00
+Description: Eco-friendly bamboo toothbrushes with soft bristles. Biodegradable handle.
+Stock: In Stock
+
+Product: Dental Floss Picks (50 count)
+Price: $5.00
+Description: Mint-flavored floss picks for easy cleaning between teeth.
+Stock: In Stock
+
+Product: Complete Dental Care Kit
+Price: $45.00
+Description: Includes Whitening Toothpaste, Bamboo Toothbrush Set, Floss Picks, and Mouthwash. Best value for complete oral hygiene.
+Stock: In Stock
+
+Product: Sensitive Gum Mouthwash
+Price: $10.00
+Description: Alcohol-free mouthwash designed to soothe sensitive gums and freshen breath.
+Stock: Low Stock
