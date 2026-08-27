@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat Agent - Admin Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #C5A059;
+            /* Roze Gold */
+            --primary-dark: #A38243;
+            --secondary: #1A202C;
+            --bg-gradient: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --success: #10B981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(197, 160, 89, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #FFF, var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 18px;
+            font-weight: 400;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 40px;
+        }
+
+        .panel {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .panel-header {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 12px;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            font-size: 15px;
+            color: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.1);
+        }
+
+        .color-picker-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .color-input-wrapper input[type="color"] {
+            width: 100%;
+            height: 50px;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            background: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .button-primary {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .button-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(197, 160, 89, 0.3);
+        }
+
+        .button-secondary {
+            background: var(--glass);
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
+        }
+
+        .button-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 40px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 6px;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .tab.active {
+            background: var(--glass);
+            color: var(--primary);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .preview-panel {
+            position: sticky;
+            top: 40px;
+        }
+
+        .preview-window {
+            background: #0F172A;
+            border-radius: 20px;
+            height: 600px;
+            position: relative;
+            border: 2px dashed var(--glass-border);
+            overflow: hidden;
+        }
+
+        .chat-widget-preview {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            width: 320px;
+            height: 480px;
+            background: #1E293B;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--glass-border);
+        }
+
+        .widget-header {
+            padding: 20px;
+            color: black;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+        }
+
+        .widget-body {
+            flex: 1;
+            padding: 20px;
+            background: #0F172A;
+        }
+
+        .message-bubble {
+            background: #1E293B;
+            padding: 14px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.5;
+            border: 1px solid var(--glass-border);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 24px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .success-message {
+            background: var(--success);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            font-weight: 600;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .chart-container {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 24px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 40px;
+            min-height: 300px;
+        }
+
+        .questions-list {
+            list-style: none;
+        }
+
+        .question-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid var(--glass-border);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .question-text {
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .question-count {
+            background: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #000;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🤖 AI Chat Agent Dashboard</h1>
+            <p>Configure and customize your intelligent assistant</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-grid">
+            <!-- Settings Panel -->
+            <div class="panel">
+                <div id="success-message" class="success-message">
+                    ✓ Settings saved successfully!
+                </div>
+
+                <!-- Tabs -->
+                <div class="tab-group">
+                    <button class="tab active" onclick="switchTab('appearance')">Appearance</button>
+                    <button class="tab" onclick="switchTab('behavior')">Behavior</button>
+                    <button class="tab" onclick="switchTab('ai-config')">AI Settings</button>
+                    <button class="tab" onclick="switchTab('hours')">Business Hours</button>
+                    <button class="tab" onclick="switchTab('analytics')">Analytics</button>
+                </div>
+
+                <!-- Appearance Tab -->
+                <div id="appearance-tab" class="tab-content active">
+                    <div class="panel-header">Widget Appearance</div>
+
+                    <div class="form-group">
+                        <label>Widget Position</label>
+                        <select id="widget_position" onchange="updatePreview()">
+                            <option value="bottom-right">Bottom Right</option>
+                            <option value="bottom-left">Bottom Left</option>
+                            <option value="top-right">Top Right</option>
+                            <option value="top-left">Top Left</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Color Scheme</label>
+                        <div class="color-picker-group">
+                            <div class="color-input-wrapper">
+                                <label style="font-size: 12px; color: #718096;">Primary</label>
+                                <input type="color" id="primary_color" value="#007bff" onchange="updatePreview()">
+                            </div>
+                            <div class="color-input-wrapper">
+                                <label style="font-size: 12px; color: #718096;">Secondary</label>
+                                <input type="color" id="secondary_color" value="#6c757d" onchange="updatePreview()">
+                            </div>
+                            <div class="color-input-wrapper">
+                                <label style="font-size: 12px; color: #718096;">Text</label>
+                                <input type="color" id="text_color" value="#ffffff" onchange="updatePreview()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Welcome Message</label>
+                        <textarea id="welcome_message" onchange="updatePreview()"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Widget Size</label>
+                        <select id="widget_size" onchange="updatePreview()">
+                            <option value="small">Small</option>
+                            <option value="medium">Medium</option>
+                            <option value="large">Large</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Behavior Tab -->
+                <div id="behavior-tab" class="tab-content">
+                    <div class="panel-header">Widget Behavior</div>
+
+                    <div class="form-group">
+                        <label>Auto-Open Delay (seconds)</label>
+                        <input type="number" id="auto_open_delay" min="0" max="60" value="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Show On Pages</label>
+                        <select id="show_on_pages">
+                            <option value="all">All Pages</option>
+                            <option value="homepage">Homepage Only</option>
+                            <option value="products">Product Pages Only</option>
+                            <option value="custom">Custom URLs</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="hide_on_mobile"> Hide on Mobile Devices
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="typing_indicator" checked> Show Typing Indicator
+                        </label>
+                    </div>
+                </div>
+
+                <!-- AI Config Tab -->
+                <div id="ai-config-tab" class="tab-content">
+                    <div class="panel-header">AI Configuration</div>
+
+                    <div class="form-group">
+                        <label>AI Model</label>
+                        <select id="ai_model">
+                            <option value="llama-3.3-70b-versatile">Groq Llama 3.3 70B (Recommended)</option>
+                            <option value="gpt-4o-mini">OpenAI GPT-4o Mini</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Temperature (Creativity: 0-1)</label>
+                        <input type="number" id="temperature" min="0" max="1" step="0.1" value="0.7">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Response Length</label>
+                        <select id="response_length">
+                            <option value="short">Short & Concise</option>
+                            <option value="medium">Medium</option>
+                            <option value="detailed">Detailed</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Fallback Message</label>
+                        <textarea id="fallback_message"></textarea>
+                    </div>
+                </div>
+
+                <!-- Business Hours Tab -->
+                <div id="hours-tab" class="tab-content">
+                    <div class="panel-header">Business Hours</div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="business_hours_enabled"> Enable Business Hours
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Timezone</label>
+                        <select id="timezone">
+                            <option value="Asia/Dubai">UAE (GST)</option>
+                            <option value="America/New_York">US Eastern</option>
+                            <option value="Europe/London">UK</option>
+                            <option value="Asia/Singapore">Singapore</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>After Hours Message</label>
+                        <textarea id="after_hours_message"></textarea>
+                    </div>
+                </div>
+
+                <!-- Analytics Tab -->
+                <div id="analytics-tab" class="tab-content">
+                    <div class="panel-header">Performance Analytics</div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="stat-today">0</div>
+                            <div class="stat-label">Conversations Today</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="stat-week">0</div>
+                            <div class="stat-label">This Week</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="stat-month">0</div>
+                            <div class="stat-label">This Month</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="stat-rpm">0ms</div>
+                            <div class="stat-label">Avg Response Time</div>
+                        </div>
+                    </div>
+
+                    <div class="panel-header" style="font-size: 16px; margin-top: 10px;">Traffic Trend (Last 7 Days)
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="trafficChart"></canvas>
+                    </div>
+
+                    <div class="panel-header" style="font-size: 16px;">Most Asked Topics</div>
+                    <ul class="questions-list" id="questions-list">
+                        <!-- Populated by JS -->
+                    </ul>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="button-group">
+                    <button class="button button-primary" onclick="saveSettings()">💾 Save Settings</button>
+                    <button class="button button-secondary" onclick="resetSettings()">↺ Reset to Defaults</button>
+                </div>
+            </div>
+
+            <!-- Live Preview Panel -->
+            <div class="panel preview-panel">
+                <div class="panel-header">Live Preview</div>
+                <div class="preview-window">
+                    <div id="chat-widget-preview" class="chat-widget-preview">
+                        <div class="widget-header" id="preview-header">
+                            <span>🤖</span>
+                            <span>AI Assistant</span>
+                        </div>
+                        <div class="widget-body">
+                            <div class="message-bubble" id="preview-welcome">
+                                Hello! I'm your AI assistant. How can I help you today?
+                            </div>
+                        </div>
+                        <div class="widget-footer">
+                            <input type="text" class="widget-input" placeholder="Type a message...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load current settings on page load
+        window.addEventListener('DOMContentLoaded', loadSettings);
+
+        async function loadSettings() {
+            try {
+                const response = await fetch('/admin/settings');
+                const settings = await response.json();
+
+                // Populate form fields
+                Object.keys(settings).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        if (element.type === 'checkbox') {
+                            element.checked = settings[key];
+                        } else {
+                            element.value = settings[key];
+                        }
+                    }
+                });
+
+                updatePreview();
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        }
+
+        async function saveSettings() {
+            const settings = {
+                widget_position: document.getElementById('widget_position').value,
+                primary_color: document.getElementById('primary_color').value,
+                secondary_color: document.getElementById('secondary_color').value,
+                text_color: document.getElementById('text_color').value,
+                welcome_message: document.getElementById('welcome_message').value,
+                widget_size: document.getElementById('widget_size').value,
+                auto_open_delay: parseInt(document.getElementById('auto_open_delay').value),
+                show_on_pages: document.getElementById('show_on_pages').value,
+                hide_on_mobile: document.getElementById('hide_on_mobile').checked,
+                typing_indicator: document.getElementById('typing_indicator').checked,
+                ai_model: document.getElementById('ai_model').value,
+                temperature: parseFloat(document.getElementById('temperature').value),
+                response_length: document.getElementById('response_length').value,
+                fallback_message: document.getElementById('fallback_message').value,
+                business_hours_enabled: document.getElementById('business_hours_enabled').checked,
+                timezone: document.getElementById('timezone').value,
+                after_hours_message: document.getElementById('after_hours_message').value
+            };
+
+            try {
+                const response = await fetch('/admin/settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(settings)
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    showSuccessMessage();
+                }
+            } catch (error) {
+                alert('Error saving settings: ' + error.message);
+            }
+        }
+
+        async function resetSettings() {
+            if (confirm('Are you sure you want to reset all settings to defaults?')) {
+                try {
+                    await fetch('/admin/settings/reset', { method: 'POST' });
+                    location.reload();
+                } catch (error) {
+                    alert('Error resetting settings: ' + error.message);
+                }
+            }
+        }
+
+        function showSuccessMessage() {
+            const msg = document.getElementById('success-message');
+            msg.style.display = 'block';
+            setTimeout(() => {
+                msg.style.display = 'none';
+            }, 3000);
+        }
+
+        function updatePreview() {
+            const primaryColor = document.getElementById('primary_color').value;
+            const welcomeMsg = document.getElementById('welcome_message').value;
+
+            document.getElementById('preview-header').style.background = primaryColor;
+            document.getElementById('preview-welcome').textContent = welcomeMsg;
+        }
+
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'analytics') {
+                loadAnalytics();
+            }
+        }
+
+        let chartInstance = null;
+
+        async function loadAnalytics() {
+            try {
+                const response = await fetch('/api/analytics/stats');
+                const data = await response.json();
+
+                // Update Cards
+                document.getElementById('stat-today').innerText = data.today;
+                document.getElementById('stat-week').innerText = data.week;
+                document.getElementById('stat-month').innerText = data.month;
+                document.getElementById('stat-rpm').innerText = data.avg_response_time + 'ms';
+
+                // Update List
+                const list = document.getElementById('questions-list');
+                list.innerHTML = '';
+                if (data.most_asked && data.most_asked.length > 0) {
+                    data.most_asked.forEach(item => {
+                        const li = document.createElement('li');
+                        li.className = 'question-item';
+                        li.innerHTML = `<span class="question-text">${item.question}</span> <span class="question-count">${item.count}</span>`;
+                        list.appendChild(li);
+                    });
+                } else {
+                    list.innerHTML = '<div style="padding:10px; color:#888;">No data available yet.</div>';
+                }
+
+                // Update Chart
+                if (data.daily_trend) {
+                    const ctx = document.getElementById('trafficChart').getContext('2d');
+
+                    // Prepare data
+                    const labels = data.daily_trend.map(d => d.date).reverse();
+                    const counts = data.daily_trend.map(d => d.count).reverse();
+
+                    if (chartInstance) {
+                        chartInstance.destroy();
+                    }
+
+                    chartInstance = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Conversations',
+                                data: counts,
+                                borderColor: '#667eea',
+                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                                borderWidth: 3,
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false }
+                            },
+                            scales: {
+                                y: { beginAtZero: true, grid: { color: '#f0f0f0' } },
+                                x: { grid: { display: false } }
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error("Failed to load analytics", error);
+            }
+        }
+    </script>
+</body>
+
+</html>
