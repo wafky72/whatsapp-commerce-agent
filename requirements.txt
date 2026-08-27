@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+openai
+chromadb
+python-dotenv
+requests
+httpx
+woocommerce
+sentence-transformers
